@@ -52,8 +52,8 @@ async function makeMidspin() {
   outputMap.settings.trackColor = loadedMap.settings.trackColor;
   /*outputMap.settings.backgroundColor = '000000';
   outputMap.settings.trackColor = 'debb7b';*/
-  outputMap.settings.beatsAhead = '1.6';
-  outputMap.settings.beatsBehind = '0.4';
+  outputMap.settings.beatsAhead = '1';
+  outputMap.settings.beatsBehind = '0.2';
   outputMap.settings.trackAnimation = "Extend";
   outputMap.settings.trackDisappearAnimation = "Shrink";
 
@@ -72,6 +72,9 @@ async function makeMidspin() {
   var pathOff = 0;
   var actionPointer = 0;
   var pathThis = 'R';
+  while (loadedMap.actions[actionPointer].floor == 0) {
+    actionPointer++;
+  }
   for (var i = 0; i < loadedMap.pathData.length; i++) {
     await timer(1);
     if (loadedMap.pathData[i].code == '!') {
@@ -84,7 +87,6 @@ async function makeMidspin() {
       while (loadedMap.actions[actionPointer].floor == (i+1)) {
         if (loadedMap.actions[actionPointer].eventType == 'Twirl') {
           twirl ^= 1;
-          console.log(`${twirl}, ${i}`);
         }
         actionPointer++;
         if (actionPointer >= loadedMap.actions.length) {
@@ -100,10 +102,13 @@ async function makeMidspin() {
         var dn = (loadedMap.pathData[i].absoluteAngle+180)%360;
       }
       totDeg += getDeg(loadedMap.pathData[i-1-pathOff].absoluteAngle, dn);
+      //console.log(`${i}: ${getDeg(loadedMap.pathData[i-1-pathOff].absoluteAngle, dn)}`);
     } else {
       totDeg += loadedMap.pathData[i].absoluteAngle;
     }
-    outputMap.pathData.push(new ADOFAI.PathData(ADOFAI.PathData.ABSOLUTE_ANGLE_LIST[findIndex(ADOFAI.PathData.ABSOLUTE_ANGLE_LIST, (totDeg%360 == 0) ? 360 : totDeg%360)]));
+    var degToPush = (totDeg%360 == 0) ? 360 : totDeg%360;
+    var pathIdx = findIndex(ADOFAI.PathData.ABSOLUTE_ANGLE_LIST, degToPush);
+    outputMap.pathData.push(new ADOFAI.PathData(ADOFAI.PathData.ABSOLUTE_ANGLE_LIST[pathIdx]));
     outputMap.pathData.push(new ADOFAI.PathData('!'));
     pathOff = 0;
     progress[0]++;
