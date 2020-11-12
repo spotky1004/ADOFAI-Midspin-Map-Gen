@@ -135,8 +135,11 @@ async function makeMidspin() {
       switch (loadedMap.actions[actionPointer].eventType) {
         case 'SetSpeed':
         outputMap.actions.push(new ADOFAI.Action((floorNow-3), 'SetSpeed'));
-        console.log(loadedMap.actions[actionPointer].eventValue.speedType);
-        outputMap.actions[outActionPointer].eventValue.speedType = loadedMap.actions[actionPointer].eventValue.speedType;
+        if (loadedMap.actions[actionPointer].eventValue.speedType == 'Bpm') {
+          outputMap.actions[outActionPointer].eventValue.isSpeedTypeBPM = loadedMap.actions[actionPointer].eventValue.speedType;
+        } else {
+          outputMap.actions[outActionPointer].eventValue.speedType = loadedMap.actions[actionPointer].eventValue.speedType;
+        }
         outputMap.actions[outActionPointer].eventValue.BPM = loadedMap.actions[actionPointer].eventValue.beatsPerMinute;
         outputMap.actions[outActionPointer].eventValue.BPM_Multiplier = loadedMap.actions[actionPointer].eventValue.bpmMultiplier;
         outActionPointer++;
